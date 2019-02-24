@@ -10,7 +10,7 @@ end
 function HowMany.OnLootReceived(eventCode, lootedBy, itemLink, quantity, itemSound, lootType, isStolen)
 --  d("OnLootReceived")
   inventoryCount, bankCount, craftBagCount = GetItemLinkStacks(itemLink)
-  s = zo_strformat("Looted: <<1>>x <<2>> (<<3>>) (I:<<4>> -- B:<<5>> -- C:<<6>>)", quantity, itemLink, GetItemLinkQuality(itemLink), inventoryCount, bankCount, craftBagCount)
+  s = zo_strformat("Looted: <<1>>x <<2>> (Bag:<<3>> Bank:<<4>> Crafting:<<5>>)", quantity, itemLink, inventoryCount, bankCount, craftBagCount)
   CHAT_SYSTEM:AddMessage(s)
 --  d(s)
 --  d("Looted: " .. quantity .. "x " .. GetItemLinkName(itemLink) .. "(Quality:" .. GetItemLinkQuality(itemLink) .. ")" ..  "(I:"..inventoryCount.."|B:"..bankCount.."|C:"..craftBagCount..")")
