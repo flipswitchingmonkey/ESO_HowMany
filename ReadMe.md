@@ -1,0 +1,1 @@
+A simple ESO addon to display how many of each looted item a player has in his bags/bank/craftingbag
