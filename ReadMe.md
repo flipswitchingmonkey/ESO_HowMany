@@ -1,9 +1,9 @@
 ## How Many
 
-A simple ESO addon to display how many of each looted item a player has in his bags/bank/craftingbag
+**How Many** is a simple ESO addon that display's the amount of whatever you looted, and how many of the same items you already own in your Bag, Bank or Crafting Bag. I created it because I like keeping an eye on my stock whilst harvesting. Maybe you do too.
 
-#### Install:
+#### Usage:
 
-- create a folder HowMany in your Documents\Elder Scrolls Online\live\AddOns\ folder
-- drop all files in there
-- start ESO or call the /reloadui command
+There are just two commands:
+/howmany on
+/howmany off
