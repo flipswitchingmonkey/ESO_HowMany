@@ -3,8 +3,11 @@ HowMany.name = "HowMany"
 
 function HowMany:Initialize()
   -- SET UP SAVED VARIABLES FOR OFFLINE STORAGE
-  self.savedVariables = ZO_SavedVars:New("HowManySavedVariables", 1, nil, {})
-  if self.savedVariables.enabled == nil then self.savedVariables.enabled = true end
+  local defaults = {
+    enabled = true,
+    group = false,
+  }
+  self.savedVariables = ZO_SavedVars:NewAccountWide("HowManySavedVariables", 1, nil, defaults)
 
   -- REGISTER SLASH COMMANDS
   SLASH_COMMANDS["/howmany"] = HowMany.ManageEvent
@@ -25,7 +28,7 @@ function HowMany.ManageEvent(param)
     else
       CHAT_SYSTEM:AddMessage("HowMany is on")
     end
-  elseif param == "off" then 
+  elseif param == "off" then
     if HowMany.savedVariables.enabled == true then
       HowMany.savedVariables.enabled = false
       EVENT_MANAGER:UnregisterForEvent(HowMany.name, EVENT_LOOT_RECEIVED)
@@ -33,19 +36,38 @@ function HowMany.ManageEvent(param)
     else
       CHAT_SYSTEM:AddMessage("HowMany is off")
     end
-  else CHAT_SYSTEM:AddMessage("Valid commands are:\n/howmany on (to turn on HowMany)\n/howmany off (to turn it off)")
+  elseif param == "showgroup" then
+    HowMany.savedVariables.enabled = true
+    HowMany.savedVariables.group = true
+    CHAT_SYSTEM:AddMessage("HowMany will show loot from group members.")
+  elseif param == "hidegroup" then
+    HowMany.savedVariables.enabled = true
+    HowMany.savedVariables.group = false
+    CHAT_SYSTEM:AddMessage("HowMany will hide loot from group members.")
+  else CHAT_SYSTEM:AddMessage("Valid commands are:\n/howmany on\n/howmany off\n/howmany showgroup\n/howmany hidegroup")
   end
 end
 
 function HowMany.OnLootReceived(eventCode, lootedBy, itemLink, quantity, itemSound, lootType, isStolen)
-  inventoryCount, bankCount, craftBagCount = GetItemLinkStacks(itemLink)
-  iCount = ""
-  bCount = ""
-  cCount = ""
-  if inventoryCount > 0 then iCount = zo_strformat("Inventory: <<1>> ",inventoryCount) end
-  if bankCount > 0 then bCount = zo_strformat("Bank: <<1>> ",bankCount) end
-  if craftBagCount > 0 then cCount = zo_strformat("CraftingBag: <<1>> ",craftBagCount) end
-  s = zo_strformat("Looted: <<1>>x <<2>> - <<3>><<4>><<5>>", quantity, itemLink, iCount, bCount, cCount)
+  local playerName = GetUniqueNameForCharacter(GetUnitName('player'))
+  local looterName = GetUniqueNameForCharacter(lootedBy)
+  local isSelf = (playerName == looterName)
+  if HowMany.savedVariables.group == false then
+    if isSelf == false then return end
+  end
+  local s = ""
+  if isSelf == true or HowMany.savedVariables.group == false then
+    inventoryCount, bankCount, craftBagCount = GetItemLinkStacks(itemLink)
+    iCount = ""
+    bCount = ""
+    cCount = ""
+    if inventoryCount > 0 then iCount = zo_strformat("Inventory: <<1>> ",inventoryCount) end
+    if bankCount > 0 then bCount = zo_strformat("Bank: <<1>> ",bankCount) end
+    if craftBagCount > 0 then cCount = zo_strformat("CraftingBag: <<1>> ",craftBagCount) end
+    s = zo_strformat("Looted: <<1>>x <<2>> - <<3>><<4>><<5>>", quantity, itemLink, iCount, bCount, cCount)
+  else
+    s = zo_strformat("<<3>> looted: <<1>>x <<2>>", quantity, itemLink, lootedBy)
+  end
   CHAT_SYSTEM:AddMessage(s)
 end
 
