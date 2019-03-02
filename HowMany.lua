@@ -58,9 +58,9 @@ function HowMany.OnLootReceived(eventCode, lootedBy, itemLink, quantity, itemSou
   local s = ""
   if isSelf == true or HowMany.savedVariables.group == false then
     inventoryCount, bankCount, craftBagCount = GetItemLinkStacks(itemLink)
-    iCount = ""
-    bCount = ""
-    cCount = ""
+    local iCount = ""
+    local bCount = ""
+    local cCount = ""
     if inventoryCount > 0 then iCount = zo_strformat("Bags: <<1>> ",inventoryCount) end
     if bankCount > 0 then bCount = zo_strformat("Bank: <<1>> ",bankCount) end
     if craftBagCount > 0 then cCount = zo_strformat("CraftingBag: <<1>> ",craftBagCount) end
