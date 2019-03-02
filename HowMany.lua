@@ -6,6 +6,7 @@ function HowMany:Initialize()
   local defaults = {
     enabled = true,
     group = false,
+    minGroupItemQuality = 3,
   }
   self.savedVariables = ZO_SavedVars:NewAccountWide("HowManySavedVariables", 1, nil, defaults)
 
@@ -44,7 +45,28 @@ function HowMany.ManageEvent(param)
     HowMany.savedVariables.enabled = true
     HowMany.savedVariables.group = false
     CHAT_SYSTEM:AddMessage("HowMany will hide loot from group members.")
-  else CHAT_SYSTEM:AddMessage("Valid commands are:\n/howmany on\n/howmany off\n/howmany showgroup\n/howmany hidegroup")
+  elseif param == "showGroupQualityAll" then
+    HowMany.savedVariables.enabled = true
+    HowMany.savedVariables.group = true
+    HowMany.savedVariables.minGroupItemQuality = 1
+    CHAT_SYSTEM:AddMessage("Show items of all qualities.")
+  elseif param == "showGroupQualityUncommon" then
+    HowMany.savedVariables.enabled = true
+    HowMany.savedVariables.minGroupItemQuality = 2
+    HowMany.savedVariables.group = true
+    CHAT_SYSTEM:AddMessage("Show items of at least uncommon rarity (green).")
+  elseif param == "showGroupQualityRare" then
+    HowMany.savedVariables.enabled = true
+    HowMany.savedVariables.group = true
+    HowMany.savedVariables.minGroupItemQuality = 3
+    CHAT_SYSTEM:AddMessage("Show items of at least rare quality (blue).")
+  elseif param == "showGroupQualityEpic" then
+    HowMany.savedVariables.enabled = true
+    HowMany.savedVariables.group = true
+    HowMany.savedVariables.minGroupItemQuality = 4
+    CHAT_SYSTEM:AddMessage("Show items of at least epic quality (purple).")
+  else
+    CHAT_SYSTEM:AddMessage("Valid commands are:\n/howmany on\n/howmany off\n/howmany showgroup\n/howmany hidegroup\n/howmany showGroupQualityAll\n/howmany showGroupQualityUncommon\n/howmany showGroupQualityRare\n/howmany showGroupQualityEpic")
   end
 end
 
@@ -56,19 +78,22 @@ function HowMany.OnLootReceived(eventCode, lootedBy, itemLink, quantity, itemSou
     if isSelf == false then return end
   end
   local s = ""
-  if isSelf == true or HowMany.savedVariables.group == false then
-    inventoryCount, bankCount, craftBagCount = GetItemLinkStacks(itemLink)
-    local iCount = ""
-    local bCount = ""
-    local cCount = ""
-    if inventoryCount > 0 then iCount = zo_strformat("Bags: <<1>> ",inventoryCount) end
-    if bankCount > 0 then bCount = zo_strformat("Bank: <<1>> ",bankCount) end
-    if craftBagCount > 0 then cCount = zo_strformat("CraftingBag: <<1>> ",craftBagCount) end
-    s = zo_strformat("Looted: <<1>>x <<2>> - <<3>><<4>><<5>>", quantity, itemLink, iCount, bCount, cCount)
-  else
-    s = zo_strformat("<<3>> looted: <<1>>x <<2>>", quantity, itemLink, lootedBy)
+  local itemQuality = GetItemLinkQuality(itemLink);
+  if quantity > 0 then
+    if isSelf == true or HowMany.savedVariables.group == false then
+      inventoryCount, bankCount, craftBagCount = GetItemLinkStacks(itemLink)
+      local iCount = ""
+      local bCount = ""
+      local cCount = ""
+      if inventoryCount > 0 then iCount = zo_strformat("Bags: <<1>> ",inventoryCount) end
+      if bankCount > 0 then bCount = zo_strformat("Bank: <<1>> ",bankCount) end
+      if craftBagCount > 0 then cCount = zo_strformat("CraftingBag: <<1>> ",craftBagCount) end
+      s = zo_strformat("Looted: <<1>>x <<2>> - <<3>><<4>><<5>>", quantity, itemLink, iCount, bCount, cCount)
+    elseif itemQuality ~= nil and itemQuality >= HowMany.savedVariables.minGroupItemQuality then
+      s = zo_strformat("<<3>> looted: <<1>>x <<2>>", quantity, itemLink, lootedBy)
+    end
+    CHAT_SYSTEM:AddMessage(s)
   end
-  if quantity > 0 then CHAT_SYSTEM:AddMessage(s) end
 end
 
 function HowMany.OnAddOnLoaded(event, addonName)
