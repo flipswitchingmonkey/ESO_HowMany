@@ -54,17 +54,17 @@ function HowMany.ManageEvent(param)
     HowMany.savedVariables.enabled = true
     HowMany.savedVariables.minGroupItemQuality = 2
     HowMany.savedVariables.group = true
-    CHAT_SYSTEM:AddMessage("Show items of at least uncommon rarity (green).")
+    CHAT_SYSTEM:AddMessage("Show items (looted by group members) of at least uncommon rarity (green).")
   elseif param == "showGroupQualityRare" then
     HowMany.savedVariables.enabled = true
     HowMany.savedVariables.group = true
     HowMany.savedVariables.minGroupItemQuality = 3
-    CHAT_SYSTEM:AddMessage("Show items of at least rare quality (blue).")
+    CHAT_SYSTEM:AddMessage("Show items (looted by group members) of at least rare quality (blue).")
   elseif param == "showGroupQualityEpic" then
     HowMany.savedVariables.enabled = true
     HowMany.savedVariables.group = true
     HowMany.savedVariables.minGroupItemQuality = 4
-    CHAT_SYSTEM:AddMessage("Show items of at least epic quality (purple).")
+    CHAT_SYSTEM:AddMessage("Show items (looted by group members) of at least epic quality (purple).")
   else
     CHAT_SYSTEM:AddMessage("Valid commands are:\n/howmany on\n/howmany off\n/howmany showgroup\n/howmany hidegroup\n/howmany showGroupQualityAll\n/howmany showGroupQualityUncommon\n/howmany showGroupQualityRare\n/howmany showGroupQualityEpic")
   end
