@@ -68,7 +68,7 @@ function HowMany.OnLootReceived(eventCode, lootedBy, itemLink, quantity, itemSou
   else
     s = zo_strformat("<<3>> looted: <<1>>x <<2>>", quantity, itemLink, lootedBy)
   end
-  CHAT_SYSTEM:AddMessage(s)
+  if quantity > 0 then CHAT_SYSTEM:AddMessage(s) end
 end
 
 function HowMany.OnAddOnLoaded(event, addonName)
