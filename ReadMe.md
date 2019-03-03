@@ -4,6 +4,11 @@
 
 #### Usage:
 
-There are just two commands:
-/howmany on
-/howmany off
+* /howmany on
+* /howmany off
+* /howmany showgroup
+* /howmany hidegroup
+* /howmany showGroupQualityAll
+* /howmany showGroupQualityUncommon
+* /howmany showGroupQualityRare
+* /howmany showGroupQualityEpic
