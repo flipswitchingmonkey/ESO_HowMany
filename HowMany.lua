@@ -80,10 +80,11 @@ function HowMany.OnLootReceived(eventCode, lootedBy, itemLink, quantity, itemSou
   local s = ""
   local itemQuality = GetItemLinkQuality(itemLink)
   local traitType = GetString("SI_ITEMTRAITTYPE", GetItemLinkTraitInfo(itemLink))
+  local hasSet, setName, numBonuses, numEquipped, maxEquipped, setId = GetItemLinkSetInfo(itemLink, false)
+  local setDisplayName = "";
+  if hasSet == true then setDisplayName = " (|c66a0ffSet: " .. setName .. "|r)" end
   local traitName = "";
-  if traitType ~= 'No Trait' then
-    traitName = ' (' .. traitType .. ')'
-  end
+  if traitType ~= 'No Trait' then traitName = ' (' .. traitType .. ')' end
   if quantity > 0 then
     if isSelf == true or HowMany.savedVariables.group == false then
       inventoryCount, bankCount, craftBagCount = GetItemLinkStacks(itemLink)
@@ -93,9 +94,11 @@ function HowMany.OnLootReceived(eventCode, lootedBy, itemLink, quantity, itemSou
       if inventoryCount > 0 then iCount = zo_strformat("Bags: <<1>> ",inventoryCount) end
       if bankCount > 0 then bCount = zo_strformat("Bank: <<1>> ",bankCount) end
       if craftBagCount > 0 then cCount = zo_strformat("CraftingBag: <<1>> ",craftBagCount) end
-      s = zo_strformat("Looted: <<1>>x <<2>><<6>> - <<3>><<4>><<5>>", quantity, itemLink, iCount, bCount, cCount, traitName)
+      -- have to split string formatting because zo_strformat only supports a max of 6 parameters... -.-
+      local invString = zo_strformat("<<1>><<2>><<3>>", iCount, bCount, cCount)
+      s = zo_strformat("Looted: <<1>>x <<2>><<4>><<5>> - <<3>>", quantity, itemLink, invString, traitName, setDisplayName)
     elseif itemQuality ~= nil and itemQuality >= HowMany.savedVariables.minGroupItemQuality then
-      s = zo_strformat("<<3>> looted: <<1>>x <<2>><<4>>", quantity, itemLink, lootedBy, traitName)
+      s = zo_strformat("<<3>> looted: <<1>>x <<2>><<4>><<5>>", quantity, itemLink, lootedBy, traitName, setDisplayName)
     end
     CHAT_SYSTEM:AddMessage(s)
   end
