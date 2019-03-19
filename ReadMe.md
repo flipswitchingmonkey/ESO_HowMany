@@ -12,3 +12,4 @@
 * /howmany showGroupQualityUncommon
 * /howmany showGroupQualityRare
 * /howmany showGroupQualityEpic
+* /howmanysettings (opens Addons menu)
