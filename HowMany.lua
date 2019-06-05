@@ -110,10 +110,12 @@ local optionsTable = {
     -- warning = "Will need to reload the UI.",	--(optional)
   },
   [3] = {
-    type = "description",
-    title = nil,	--(optional)
-    text = nil,
-    width = "half",	--or "half" (optional)
+    type = "checkbox",
+    name = "Use MasterMerchant",
+    tooltip = "Lookup MasterMerchant avg price if available",
+    getFunc = function() return HowMany.savedVariables.useMasterMerchant end,
+    setFunc = function(value) HowMany.UseMasterMerchant(value) end,
+    width = "half",
   },
   [4] = {
     type = "checkbox",
@@ -169,6 +171,7 @@ function HowMany:Initialize()
     group = false,
     minGroupItemQuality = 3,
     filter = {},
+    useMasterMerchant = true,
   }
   for key, value in ipairs(itemTypesTable) do
     defaults["filter"][value["val"]] = true
@@ -267,6 +270,15 @@ function HowMany.ShowGroupLoot(state)
   end
 end
 
+function HowMany.UseMasterMerchant(state)
+  HowMany.savedVariables.useMasterMerchant = state
+  if state == true then
+    CHAT_SYSTEM:AddMessage("HowMany will lookup Master Merchant prices for loot.")
+  else
+    CHAT_SYSTEM:AddMessage("HowMany will not use Master Merchant.")
+  end
+end
+
 function HowMany.SetMinGroupItemQualityByLabel(var)
   for key, value in pairs(HowMany.qualityLabels) do
     if var == value then
@@ -289,7 +301,7 @@ function HowMany.OnLootReceived(eventCode, lootedBy, itemLink, quantity, itemSou
   if HowMany.savedVariables.group == false then
     if isSelf == false then return end
   end
-  
+
   local itemType = GetItemLinkItemType(itemLink)
   -- if there's a filter entry and it is set to false, ignore this item
   if HowMany.savedVariables["filter"][itemType] ~= nil and HowMany.savedVariables["filter"][itemType] == false then return end
@@ -316,6 +328,10 @@ function HowMany.OnLootReceived(eventCode, lootedBy, itemLink, quantity, itemSou
       s = zo_strformat("Looted: <<1>>x <<2>><<4>><<5>> - <<3>>", quantity, itemLink, invString, traitName, setDisplayName)
     elseif itemQuality ~= nil and itemQuality >= HowMany.savedVariables.minGroupItemQuality then
       s = zo_strformat("<<3>> looted: <<1>>x <<2>><<4>><<5>>", quantity, itemLink, lootedBy, traitName, setDisplayName)
+    end
+    if HowMany.savedVariables.useMasterMerchant == true and MasterMerchant ~= nil then
+      local mmStats = MasterMerchant.itemStats(MasterMerchant,itemLink)
+      s = zo_strformat("<<1>> - |cedba12MM Avg: <<2>> |t16:16:EsoUI/Art/currency/currency_gold.dds|t|r |c379b09(<<3>> sales)|r", s, mmStats.avgPrice, mmStats.numSales)
     end
     CHAT_SYSTEM:AddMessage(s)
   end
