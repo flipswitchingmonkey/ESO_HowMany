@@ -1,7 +1,7 @@
 ## Title: How Many
 ## AddOnVersion: 1
 ## APIVersion: 100026 100027
-## Version: 1.0.7
+## Version: 1.0.8
 ## Author: flipswitchingmonkey
 ## SavedVariables: HowManySavedVariables
 ## OptionalDependsOn: LibAddonMenu-2.0

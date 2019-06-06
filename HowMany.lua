@@ -329,9 +329,13 @@ function HowMany.OnLootReceived(eventCode, lootedBy, itemLink, quantity, itemSou
     elseif itemQuality ~= nil and itemQuality >= HowMany.savedVariables.minGroupItemQuality then
       s = zo_strformat("<<3>> looted: <<1>>x <<2>><<4>><<5>>", quantity, itemLink, lootedBy, traitName, setDisplayName)
     end
-    if HowMany.savedVariables.useMasterMerchant == true and MasterMerchant ~= nil then
+    if HowMany.savedVariables.useMasterMerchant == true and MasterMerchant ~= nil and s ~= "" then
       local mmStats = MasterMerchant.itemStats(MasterMerchant,itemLink)
-      s = zo_strformat("<<1>> - |cedba12MM Avg: <<2>> |t16:16:EsoUI/Art/currency/currency_gold.dds|t|r |c379b09(<<3>> sales)|r", s, mmStats.avgPrice, mmStats.numSales)
+      if mmStats.avgPrice == nil or mmStats.numSales == nil then
+        s = zo_strformat("<<1>> - |cedba12MM (no data)|r", s)
+      else
+        s = zo_strformat("<<1>> - |cedba12MM Avg: <<2>> |t16:16:EsoUI/Art/currency/currency_gold.dds|t|r |c379b09(<<3>> sales)|r", s, mmStats.avgPrice, mmStats.numSales)
+      end
     end
     CHAT_SYSTEM:AddMessage(s)
   end
